@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import Modal from "react-modal";
 
+import { listPets, createPet } from "./api";
+
 import Pet from "./Pet";
 import NewPetModal from "./NewPetModal";
 
@@ -14,23 +16,16 @@ const App = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch("http://localhost:3001/pets")
-      .then((res) => res.json())
+    listPets()
       .then((pets) => setPets(pets))
       .finally(() => setLoading(false));
   }, []);
 
-  const addPet = async ({ name, kind, photo }) => {
-    setPets([
-      ...pets,
-      {
-        id: Math.random(),
-        name: name,
-        kind: kind,
-        photo: photo,
-      },
-    ]);
-    setNewPetOpen(false);
+  const addPet = async (pet) => {
+    return createPet(pet).then((newPet) => {
+      setPets([...pets, newPet]);
+      setNewPetOpen(false);
+    });
   };
 
   return (
